@@ -129,6 +129,7 @@ function App() {
   
 
   React.useEffect(() => {
+    getImgs()
     setImage(1)
   }, [])
 
