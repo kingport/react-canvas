@@ -6,19 +6,22 @@ function App() {
   let currentLocation = 0
   // creact imgs array
   const getImgs = () => { 
-    let tatalImages = 234
+    let tatalImages = 150
     let images = []
-    for (let i = 3; i < tatalImages+3; i++) {
-      let filenName = `Tron_`
+    for (let i = 1; i < tatalImages; i++) {
+      let filenName = ``
       if(i<10) {
-        filenName += `00`
+        filenName += `000`
       }else 
       if(i <100) {
+        filenName += `00`
+      }else 
+      if(i >=100) {
         filenName += `0`
       }
-      filenName += i + `.jpg`
+      filenName += i + `.jpeg`
       let img = new Image()
-      img.src = `http://ekragency.com/demos/canvas-scroll/images/${filenName}`
+      img.src = new URL(`./img/${filenName}`, import.meta.url).href 
       images.push(img)
     }
     return {
@@ -126,7 +129,7 @@ function App() {
   
 
   React.useEffect(() => {
-    setImage(4)
+    setImage(1)
   }, [])
 
 
