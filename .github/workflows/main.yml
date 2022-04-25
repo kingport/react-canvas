@@ -1,36 +1,31 @@
-# This is a basic workflow to help you get started with Actions
+push:  # 指定触发事件
+    branches:
+      - master  # 指定触发 action 的分支
 
-name: CI
-
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  main:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    # 拉取github仓库代码
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    # 执行依赖安装
+    - name: 安装依赖
+      run: |
+          npm install
+        
+    # 执行构建步骤
+    - name: 构建
+      run: |
+          npm run build
+    # 执行部署
+    - name: 部署
+      uses: JamesIves/github-pages-deploy-action@releases/v3 # 这个action会根据配置自动推送代码到指定分支
+      with:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }} # 指定密钥
+        BRANCH: gh-pages  ##指定推送到的远程分支
+        FOLDER: /dist # 指定构建之后要推送哪个目录的代码
