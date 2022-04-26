@@ -37,7 +37,7 @@ function App() {
   const setImage = (newLocation) => { 
     var canv = document.getElementById('background');
     var context = canv.getContext('2d');
-    console.log(newLocation, 'newLocation')
+    // console.log(newLocation, 'newLocation')
     const { images } = getImgs()
     context.drawImage(images[newLocation], 0, 0, 1280, 720);
   }
@@ -63,15 +63,21 @@ function App() {
     }
   }
 
-  const throttle = (fn,delay) => {
-    let flag = false
-    return () => { 
-      if(!flag) {
-        flag = true
-        fn()
-        setTimeout(() =>{
-          flag = false
-        }, delay)
+  const debounce = (func, wait = 5, immediate = true) => {
+    let timer
+    return (...args) => {
+      let context = this
+      if (timer) clearTimeout(timer)
+      if (immediate) {
+        let callNow = !timer
+        timer = setTimeout(() => {
+          timer = null
+        }, wait)
+        if (callNow) func.apply(context, args)
+      } else {
+        timer = setTimeout(() => {
+          func.apply(context, args)
+        }, wait)
       }
     }
   }
@@ -81,18 +87,21 @@ function App() {
    * 滚动事件
    * @param {e} 滚动事件参数
    */
-  const mouseWheelHandler = ((e) => {
+  function mouseWheelHandler(e) {
+    console.log(e, "e")
     const { images } = getImgs()
     var distance = wheelDistance(e);
     currentLocation -= Math.round(distance*3)
+    console.log(currentLocation, 'currentLocation')
     if(currentLocation < 0) {
       currentLocation = 0
     }
     if(currentLocation >= images.length) { 
       currentLocation = (images.length-1)
-    }    
-    throttle(setImage(currentLocation),10)
-  })
+    } 
+    setImage(currentLocation)
+    // throttle(setImage(currentLocation),100)
+  }
 
   /**
    * @description
@@ -129,12 +138,13 @@ function App() {
   
 
   React.useEffect(() => {
-    getImgs()
-    setImage(1)
+    const { images } = getImgs()
+    if(images.length > 0) {
+      setImage(0)
+    }
   }, [])
 
-
-  window.addEventListener("mousewheel", mouseWheelHandler, false);
+  window.addEventListener("mousewheel",debounce(mouseWheelHandler) , false);
 
   return (
     <div className="App">
