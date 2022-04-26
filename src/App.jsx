@@ -70,14 +70,20 @@ function App() {
       if (timer) clearTimeout(timer)
       if (immediate) {
         let callNow = !timer
-        timer = setTimeout(() => {
+        timer = requestAnimationFrame(() => {
           timer = null
-        }, wait)
+        })
+        // timer = setTimeout(() => {
+        //   timer = null
+        // }, 5)
         if (callNow) func.apply(context, args)
       } else {
-        timer = setTimeout(() => {
+        timer = requestAnimationFrame(() => {
           func.apply(context, args)
-        }, wait)
+        })
+        // timer = setTimeout(() => {
+        //   func.apply(context, args)
+        // }, 5)
       }
     }
   }
